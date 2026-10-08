@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1720">
+<title>Lernyqo — One upload. Complete revision.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/extreme-motion.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="brand-mark">L</span><span>Lernyqo</span></div>
+    <div class="tagline">One upload. Complete revision.</div>
+    <nav class="nav-stack">
+      <button class="nav active" data-page="dashboard"><span>⌂</span><span>Dashboard</span></button>
+      <button class="nav" data-page="lab"><span>◈</span><span>Study Lab</span></button>
+      <button class="nav" data-page="mistakes"><span>✦</span><span>Mistake Notebook</span></button>
+      <button class="nav" data-page="exams"><span>◷</span><span>Exam Planner</span></button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="mode-chip"><span class="status-dot"></span><span id="modeBadge">Checking AI…</span></div>
+      <small>Focused revision, without the clutter.</small>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="mobile-brand"><span class="brand-mark">L</span> Lernyqo</div>
+      <div class="topbar-copy"><span class="eyebrow">LEARNING LOOP</span><strong>Upload → Learn → Practice → Revise</strong></div>
+      <button class="icon-button" id="mobileMenu" aria-label="Open navigation">☰</button>
+      <button class="ghost-button" onclick="loadAll()">↻ <span>Refresh</span></button>
+    </header>
+
+    <div id="toast" class="toast" role="status"></div>
+
+    <section id="dashboard" class="page active">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow light">YOUR STUDY COMMAND CENTER</span>
+          <h1>Make your notes <em>work harder.</em></h1>
+          <p>Turn your own study material into a focused revision loop — understand it, practice it, find your weak spots, and revise them.</p>
+          <div class="hero-actions">
+            <button class="primary-button" onclick="showPage('lab')">Open Study Lab <span>→</span></button>
+            <button class="hero-link" onclick="tryDemo()">Try demo material</button>
+          </div>
+        </div>
+        <div class="loop-card">
+          <div class="loop-label">YOUR REVISION LOOP</div>
+          <div class="loop-step"><b>01</b><span>Upload</span><small>your notes</small></div>
+          <div class="loop-step"><b>02</b><span>Learn</span><small>summary + recall</small></div>
+          <div class="loop-step"><b>03</b><span>Practice</span><small>quiz + test</small></div>
+          <div class="loop-step"><b>04</b><span>Revise</span><small>fix mistakes</small></div>
+        </div>
+      </div>
+
+      <div class="section-heading compact"><div><span class="eyebrow">AT A GLANCE</span><h2>Your study activity</h2></div></div>
+      <div class="stats-grid" id="stats"></div>
+
+      <div class="dashboard-grid">
+        <div class="card next-action-card">
+          <div class="card-kicker">NEXT BEST ACTION</div>
+          <div class="next-action-icon">↗</div>
+          <h2 id="nextActionTitle">Upload your first study material</h2>
+          <p id="nextActionDetail">Start the learning loop with a PDF, TXT or Markdown note.</p>
+          <button class="secondary-button" id="nextActionButton" onclick="showPage('lab')">Go to Study Lab →</button>
+        </div>
+        <div class="card exam-card">
+          <div class="card-kicker">UPCOMING EXAM</div>
+          <div class="exam-main"><div><h2 id="nextExam">No exam added</h2><p id="examCountdown">Add an exam to build a revision timeline.</p></div><div class="readiness-ring" id="ring">0%</div></div>
+          <div class="mini-progress"><span id="readinessBar"></span></div>
+          <div class="exam-footer"><span>Activity-based readiness</span><button class="text-button" onclick="showPage('exams')">Open planner</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lab" class="page">
+      <div class="section-heading"><div><span class="eyebrow">STUDY LAB</span><h1>Your material, transformed.</h1><p>Choose one material and stay in the same workspace while you learn, practice and revise.</p></div></div>
+      <div class="upload-card card">
+        <label class="drop-zone" id="dropZone">
+          <input id="fileInput" type="file" accept=".pdf,.txt,.md,.jpg,.jpeg,.png">
+          <span class="upload-symbol">↑</span><strong id="fileLabel">Drop a study file here</strong><span>PDF, TXT, MD, JPG or PNG · max 15 MB</span>
+        </label>
+        <div class="upload-side"><span class="eyebrow">NEW MATERIAL</span><h3>Start with your notes</h3><p>Lernyqo extracts readable text first. Live AI uses that source; Demo Mode never pretends to be live AI.</p><button class="primary-button full" id="uploadBtn" onclick="upload()">Upload material</button></div>
+      </div>
+
+      <div class="section-heading compact"><div><span class="eyebrow">YOUR MATERIALS</span><h2>Choose what you're studying</h2></div><span class="muted" id="materialCount"></span></div>
+      <div class="material-grid" id="materials"></div>
+      <div id="labContent"></div>
+    </section>
+
+    <section id="mistakes" class="page">
+      <div class="section-heading"><div><span class="eyebrow">MISTAKE NOTEBOOK</span><h1>Turn wrong answers into progress.</h1><p>Keep the question, the reason you missed it, and the correct approach together.</p></div><button class="primary-button" onclick="openMistakeModal()">+ Add mistake</button></div>
+      <div class="filter-bar card">
+        <input id="mistakeSearch" class="input" placeholder="Search mistakes, topics or subjects…" oninput="debouncedMistakes()">
+        <select id="mistakeStatus" class="select" onchange="loadMistakes()"><option value="all">All mistakes</option><option value="open">Open</option><option value="fixed">Fixed</option></select>
+      </div>
+      <div id="mistakesList"></div>
+    </section>
+
+    <section id="exams" class="page">
+      <div class="section-heading"><div><span class="eyebrow">EXAM PLANNER</span><h1>Give your revision a deadline.</h1><p>Add your next exam and Lernyqo will turn the countdown into a simple preparation path.</p></div></div>
+      <div class="card exam-form"><div><span class="eyebrow">ADD AN EXAM</span><h2>What are you preparing for?</h2></div><div class="form-grid"><input id="examName" class="input" placeholder="e.g. HSC Chemistry"><input id="examDate" class="input" type="date"><button class="primary-button" onclick="addExam()">Add exam</button></div></div>
+      <div id="examsList"></div>
+    </section>
+
+    <section id="quiz" class="page overlay-page"><div class="section-heading"><div><span class="eyebrow">QUIZ CENTER</span><h1>Test what you actually remember.</h1><p>One question at a time. Every wrong answer can become a notebook entry.</p></div><button class="text-button" onclick="showPage('lab')">← Back to Study Lab</button></div><div id="quizContent" class="card empty">Generate a quiz from a material in Study Lab.</div></section>
+
+    <section id="tests" class="page overlay-page"><div class="section-heading"><div><span class="eyebrow">PRACTICE TEST</span><h1>See whether you're ready.</h1><p>MCQs are auto-scored. Short-answer questions are intentionally self-check so the student still does the thinking.</p></div><button class="text-button" onclick="showPage('lab')">← Back to Study Lab</button></div><div id="testsContent" class="card empty">Generate a practice test from Study Lab.</div></section>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+  <div class="modal" role="dialog" aria-modal="true" onclick="event.stopPropagation()">
+    <div class="modal-head"><div><span class="eyebrow" id="modalEyebrow">LERNYQO</span><h2 id="modalTitle">Add mistake</h2></div><button class="close-button" onclick="closeModal()">×</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>

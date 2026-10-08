@@ -1,0 +1,320 @@
+/* Lernyqo — Extreme Premium Motion Layer
+   Visual-only enhancement. No product behavior is changed. */
+:root{
+  --motion-ultra:cubic-bezier(.16,1,.3,1);
+  --motion-elastic:cubic-bezier(.22,1.3,.36,1);
+}
+
+html{background:var(--bg)}
+body{position:relative;isolation:isolate}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-3;
+  background:
+    radial-gradient(620px 420px at var(--ambient-x, 20%) var(--ambient-y, 8%), rgba(121,203,168,.08), transparent 68%),
+    radial-gradient(560px 420px at 94% 92%, rgba(25,58,65,.055), transparent 72%);
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-2;
+  opacity:.08;
+  background-image:radial-gradient(rgba(13,27,36,.42) .55px, transparent .55px);
+  background-size:14px 14px;
+  mix-blend-mode:multiply;
+}
+
+.app-shell{position:relative;z-index:1}
+.main{position:relative;min-height:100vh}
+.main::before{
+  content:"";
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:82px;
+  height:2px;
+  border-radius:999px;
+  opacity:.18;
+  background:linear-gradient(90deg,transparent,rgba(121,203,168,.8),transparent);
+  transform:scaleX(.2);
+  transform-origin:left center;
+  transition:transform .7s var(--motion-ultra),opacity .7s var(--motion-ultra);
+}
+.main.page-active-motion::before{transform:scaleX(1);opacity:.38}
+
+/* Ambient cursor — desktop only; deliberately invisible on touch. */
+.motion-cursor{position:fixed;inset:0;pointer-events:none;z-index:200}
+.motion-cursor::before{
+  content:"";
+  position:absolute;
+  width:32px;height:32px;
+  border-radius:50%;
+  left:calc(var(--cursor-x, -100px) - 16px);
+  top:calc(var(--cursor-y, -100px) - 16px);
+  border:1px solid rgba(121,203,168,.38);
+  box-shadow:0 0 24px rgba(121,203,168,.1),inset 0 0 12px rgba(255,255,255,.08);
+  opacity:var(--cursor-active,0);
+  transition:width .25s var(--motion-ultra),height .25s var(--motion-ultra),opacity .18s ease;
+}
+.motion-cursor::after{
+  content:"";
+  position:absolute;
+  width:320px;height:320px;
+  border-radius:50%;
+  left:calc(var(--cursor-x, -1000px) - 160px);
+  top:calc(var(--cursor-y, -1000px) - 160px);
+  background:radial-gradient(circle, rgba(121,203,168,.065) 0%, rgba(121,203,168,.02) 27%, transparent 67%);
+  filter:blur(4px);
+  opacity:var(--cursor-active,0);
+  transform:scale(var(--cursor-scale,1));
+  transition:transform .18s var(--motion-ultra),opacity .2s ease;
+}
+
+/* Scroll indicator */
+.scroll-progress{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:2px;
+  z-index:190;
+  pointer-events:none;
+  background:rgba(13,27,36,.035);
+}
+.scroll-progress span{
+  display:block;
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--mint-strong),#a9e2c7);
+  box-shadow:0 0 14px rgba(121,203,168,.34);
+  transform-origin:left center;
+}
+
+/* Sidebar depth */
+.sidebar{
+  box-shadow:18px 0 50px rgba(5,15,20,.05), inset -1px 0 rgba(255,255,255,.025);
+}
+.sidebar::after{
+  content:"";
+  position:absolute;
+  inset:auto -50px 72px auto;
+  width:150px;height:150px;
+  border:1px solid rgba(188,232,213,.06);
+  border-radius:50%;
+  filter:blur(.1px);
+  animation:sidebarOrbit 12s ease-in-out infinite alternate;
+  pointer-events:none;
+}
+@keyframes sidebarOrbit{
+  from{transform:translate3d(0,0,0) rotate(0deg)}
+  to{transform:translate3d(-18px,-10px,0) rotate(18deg)}
+}
+.nav::before{
+  content:"";
+  position:absolute;
+  top:0;bottom:0;left:0;
+  width:2px;
+  background:linear-gradient(180deg,transparent,var(--mint),transparent);
+  transform:scaleY(0);
+  transform-origin:center;
+  transition:transform .3s var(--motion-ultra);
+}
+.nav:hover::before,.nav.active::before{transform:scaleY(1)}
+.nav span:first-child{transition:transform .28s var(--motion-elastic),color .2s ease}
+.nav:hover span:first-child{transform:translateX(2px) rotate(-6deg)}
+.nav.active span:first-child{transform:translateX(2px)}
+
+/* Hero depth + interactive lighting */
+.hero{perspective:1000px;transform-style:preserve-3d}
+.hero::before{transform-style:preserve-3d}
+.hero-copy,.loop-card{will-change:transform}
+.hero-copy{transform:translate3d(var(--hero-copy-x,0px),var(--hero-copy-y,0px),20px)}
+.loop-card{transform:translate3d(var(--loop-x,0px),var(--loop-y,0px),28px)}
+.hero-copy h1 em{
+  position:relative;
+  display:inline-block;
+  color:var(--mint);
+  text-shadow:0 0 26px rgba(121,203,168,.06);
+}
+.hero-copy h1 em::after{
+  content:"";
+  position:absolute;
+  left:0;right:8%;bottom:-4px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--mint),transparent);
+  opacity:.55;
+  transform:scaleX(.15);
+  transform-origin:center;
+  animation:headlineLine 1.2s .35s var(--motion-ultra) forwards;
+}
+@keyframes headlineLine{to{transform:scaleX(1)}}
+.loop-card{backdrop-filter:blur(10px);transition:box-shadow .35s var(--motion-ultra),border-color .35s var(--motion-ultra)}
+.loop-card:hover{border-color:rgba(188,232,213,.26);box-shadow:0 18px 42px rgba(0,0,0,.12)}
+.loop-step{position:relative;overflow:hidden}
+.loop-step::after{
+  content:"";
+  position:absolute;
+  left:0;bottom:0;width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(188,232,213,.35),transparent);
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .42s var(--motion-ultra);
+}
+.loop-step:hover::after{transform:scaleX(1)}
+
+/* General premium tilt/glare surfaces */
+.motion-tilt{position:relative;transform-style:preserve-3d;will-change:transform}
+.motion-tilt::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  opacity:0;
+  background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%), rgba(255,255,255,.68), transparent 26%);
+  mix-blend-mode:soft-light;
+  transition:opacity .25s ease;
+}
+.motion-tilt:hover::before{opacity:.65}
+.motion-tilt::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
+}
+
+/* Cards become tactile without changing their silhouette. */
+.stat-card,.material-card,.next-action-card,.exam-card,.selected-workspace,.concept-card,.mistake-card,.exam-row,.flash-card,.loop-card{
+  backface-visibility:hidden;
+}
+.stat-card .stat-value{transform:translateZ(8px);transition:transform .35s var(--motion-ultra)}
+.stat-card:hover .stat-value{transform:translate3d(0,-2px,8px)}
+.material-card .material-actions .open{position:relative;overflow:hidden}
+.material-card .material-actions .open::after,
+.primary-button::after{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 -120%;
+  width:60%;
+  background:linear-gradient(110deg,transparent,rgba(255,255,255,.28),transparent);
+  transform:skewX(-18deg);
+  transition:left .65s var(--motion-ultra);
+  pointer-events:none;
+}
+.material-card .material-actions .open:hover::after,.primary-button:hover::after{left:150%}
+.primary-button,.material-actions .open{position:relative;overflow:hidden}
+
+/* Magnetic buttons */
+.motion-magnetic{will-change:transform}
+.motion-magnetic .button-arrow{display:inline-block;transition:transform .28s var(--motion-elastic)}
+.motion-magnetic:hover .button-arrow{transform:translateX(4px)}
+
+/* Upload zone: make the interaction feel alive */
+.drop-zone{position:relative;overflow:hidden}
+.drop-zone::before{
+  content:"";
+  position:absolute;
+  width:180px;height:180px;
+  border-radius:50%;
+  left:var(--drop-x,50%);top:var(--drop-y,50%);
+  transform:translate(-50%,-50%) scale(.55);
+  border:1px solid rgba(121,203,168,.14);
+  box-shadow:0 0 0 16px rgba(121,203,168,.025),0 0 0 32px rgba(121,203,168,.016);
+  opacity:0;
+  transition:opacity .25s ease,transform .35s var(--motion-ultra);
+  pointer-events:none;
+}
+.drop-zone:hover::before{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.drop-zone.drag::before{opacity:1;transform:translate(-50%,-50%) scale(1.06);animation:dropOrbit 1.2s linear infinite}
+@keyframes dropOrbit{to{transform:translate(-50%,-50%) scale(1.06) rotate(360deg)}}
+.upload-symbol{filter:drop-shadow(0 0 0 rgba(121,203,168,0));transition:transform .3s var(--motion-elastic),filter .3s ease}
+.drop-zone:hover .upload-symbol{transform:translateY(-6px) scale(1.08);filter:drop-shadow(0 7px 14px rgba(121,203,168,.25))}
+
+/* Workspace stage change */
+.workspace-body{position:relative;min-height:180px}
+.workspace-body::before{
+  content:"";
+  position:absolute;
+  left:24px;right:24px;top:8px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(121,203,168,.24),transparent);
+  transform:scaleX(.1);opacity:0;
+}
+.selected-workspace .workspace-body.is-switching::before{animation:stageTrace .55s var(--motion-ultra) both}
+@keyframes stageTrace{0%{opacity:0;transform:scaleX(.1)}35%{opacity:1}100%{opacity:0;transform:scaleX(1)}}
+
+/* Flashcard depth */
+.flash-card{perspective:1000px;transform-style:preserve-3d}
+.flash-card .flash-question,.flash-card .flash-answer,.flash-card .flash-footer{transform:translateZ(12px)}
+.flash-card.is-revealed .flash-question{animation:questionFloat .45s var(--motion-ultra) both}
+.flash-card.is-revealed .flash-answer{animation:answerFloat .5s .04s var(--motion-ultra) both}
+@keyframes questionFloat{from{opacity:.2;transform:translateZ(12px) translateY(6px)}to{opacity:1;transform:translateZ(12px) translateY(0)}}
+@keyframes answerFloat{from{opacity:0;transform:translateZ(12px) translateY(10px) scale(.985)}to{opacity:1;transform:translateZ(12px) translateY(0) scale(1)}}
+
+/* Quiz answer feedback pulse */
+.option.selected{position:relative}
+.option.selected::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  border:1px solid rgba(121,203,168,.34);
+  animation:selectionPulse .55s var(--motion-ultra) both;
+}
+@keyframes selectionPulse{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+
+/* Results score reveal */
+.result-score,.test-result .big{animation:scorePop .7s var(--motion-elastic) both}
+@keyframes scorePop{0%{opacity:0;transform:translateY(12px) scale(.84)}70%{opacity:1;transform:translateY(-2px) scale(1.03)}100%{transform:translateY(0) scale(1)}}
+
+/* Page transitions */
+.page.page-leave{display:block;animation:pageLeave .18s ease both}
+.page.page-enter-strong{animation:pageEnterStrong .48s var(--motion-ultra) both}
+@keyframes pageLeave{to{opacity:0;transform:translateY(-5px) scale(.998);filter:blur(2px)}}
+@keyframes pageEnterStrong{from{opacity:0;transform:translateY(14px) scale(.992);filter:blur(2px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+
+/* Success state: visually satisfying, still subtle */
+.toast.success-pulse::before{
+  content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--mint-strong);
+  margin-right:8px;box-shadow:0 0 0 0 rgba(121,203,168,.35);vertical-align:1px;
+  animation:toastDot .9s var(--motion-ultra) both;
+}
+@keyframes toastDot{50%{box-shadow:0 0 0 8px rgba(121,203,168,0)}100%{box-shadow:0 0 0 0 rgba(121,203,168,0)}}
+
+/* Dense list hover illumination */
+.mistake-card,.exam-row,.material-card,.concept-card,.stat-card{overflow:hidden}
+.mistake-card::after,.exam-row::after,.material-card::after,.concept-card::after,.stat-card::after{
+  content:"";
+  position:absolute;
+  left:-20%;right:-20%;bottom:-65px;height:90px;
+  background:radial-gradient(circle at center,rgba(121,203,168,.09),transparent 64%);
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity .35s ease,transform .45s var(--motion-ultra);
+  pointer-events:none;
+}
+.mistake-card:hover::after,.exam-row:hover::after,.material-card:hover::after,.concept-card:hover::after,.stat-card:hover::after{opacity:1;transform:translateY(0)}
+
+/* Mobile stays intentional, not just a collapsed desktop. */
+@media(max-width:720px){
+  .main::before{left:12px;right:12px;top:72px}
+  .hero-copy,.loop-card{transform:none!important}
+  .motion-tilt::before,.motion-cursor{display:none}
+  .main{padding-bottom:80px}
+}
+
+@media(pointer:coarse){
+  .motion-cursor{display:none}
+  .card:hover{transform:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  body::before,body::after{display:none}
+  .main::before,.motion-cursor,.scroll-progress{display:none}
+  .hero-copy,.loop-card{transform:none!important}
+  .motion-tilt::before,.drop-zone::before,.material-card .material-actions .open::after,.primary-button::after{display:none}
+}
